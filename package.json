@@ -1,8 +1,21 @@
 {
-  "name": "Amazone_clone_backend",
+  "name": "amazone-clone-server",
   "version": "1.0.0",
   "description": " amazone_clone_backend",
   "main": "server.js",
   "repository": "https://github.com/sameeprana/amazone-clone-backend.git",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.3",
+    "nodemon": "^2.0.22"
+  }
 }

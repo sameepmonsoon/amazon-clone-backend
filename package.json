@@ -1,0 +1,8 @@
+{
+  "name": "Amazone_clone_backend",
+  "version": "1.0.0",
+  "description": " amazone_clone_backend",
+  "main": "server.js",
+  "repository": "https://github.com/sameeprana/amazone-clone-backend.git",
+  "license": "MIT"
+}

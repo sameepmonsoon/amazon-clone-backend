@@ -8,4 +8,4 @@ const CartSchema = new mongoose.Schema({
   cartItems: { type: Array, required: true, default: [] },
 });
 
-export default Mongoose.model("Cart", CartSchema);
+export default mongoose.model("Cart", CartSchema);

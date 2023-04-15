@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.mjs";
+import cartRoutes from "./routes/cartRoutes.mjs";
 const port = 8000;
 const app = express();
 app.use(cors({ origin: "*" }));
@@ -24,6 +25,7 @@ const connect = () => {
 
 // routes
 app.use("/auth", authRoutes);
+app.use("/cart", cartRoutes);
 
 app.listen(port, () => {
   connect();

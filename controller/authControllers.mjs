@@ -25,7 +25,7 @@ export const signup = async (req, res, next) => {
         sameSite: "strict",
       })
       .status(200)
-      .json({ token: token, _id, ...othersData });
+      .json({ token: token, ...othersData });
   } catch (err) {
     res.status(400).json({ message: "Error creating user: " + err.message });
   }

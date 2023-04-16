@@ -11,7 +11,7 @@ const addCart = async (req, res) => {
       { upsert: true, new: true }
     ).populate("cartItems.product");
 
-    return res.status(201).json({ message: "Cart created", cart });
+    return res.status(201).json({ message: "Items added into the Cart", cart });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error creating cart" });

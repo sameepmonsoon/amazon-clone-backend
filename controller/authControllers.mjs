@@ -1,14 +1,22 @@
 import Users from "../Models/Users.mjs";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-// import { handleError } from "../error.js";
+import crypto from "crypto";
+
+const generateToken = (length) => {
+  return crypto.randomBytes(length).toString("hex");
+};
+
 export const signup = async (req, res, next) => {
   try {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
-    const newUser = new Users({ ...req.body, password: hash });
+    const token = generateToken(16); // generate a 16-byte token
+    const newUser = new Users({
+      ...req.body,
+      password: hash,
+      token: token, // assign token to the new user
+    });
     await newUser.save();
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT);
     const { password, ...othersData } = newUser._doc;
     res
       .cookie("access_token", token, {
@@ -16,14 +24,12 @@ export const signup = async (req, res, next) => {
         httpOnly: true,
         sameSite: "strict",
       })
-
       .status(200)
       .json({ token: token, ...othersData });
   } catch (err) {
     res.status(400).json({ message: "Error creating user: " + err.message });
   }
 };
-
 export const signin = async (req, res, next) => {
   try {
     const user = await Users.findOne({ email: req.body.email });
@@ -37,7 +43,9 @@ export const signin = async (req, res, next) => {
     if (!passwordMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT);
+    const token = generateToken(16); // generate a new token
+    user.token = token; // update the token field of the authenticated user
+    await user.save();
     const { password, ...othersData } = user._doc;
     res
       .cookie("access_token", token, {

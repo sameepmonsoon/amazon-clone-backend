@@ -16,6 +16,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    token: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     // profilePicture: { type: String },
   },
   {

@@ -1,12 +1,10 @@
 import Cart from "../Models/Cart.mjs";
 import jwt from "jsonwebtoken";
-
 const addCart = async (req, res) => {
-  const userId = req.user._id;
-  console.log(userId);
+  const userId = req.user.toString();
+  console.log("user id", userId);
   try {
-    let cart = await Cart.findOne({ user: userId }); // Search for cart with user id
-
+    let cart = await Cart.findOne({ user: userId });
     if (cart) {
       // Update existing cart
       cart.cartItems[0] = req.body;
@@ -16,7 +14,7 @@ const addCart = async (req, res) => {
       // Create new cart
       const newCart = new Cart({
         user: userId,
-        cartItems,
+        cartItems: [req.body],
       });
       const savedCart = await newCart.save();
       return res.status(201).json({ message: "Cart created", cart: savedCart });

@@ -1,33 +1,43 @@
 import Cart from "../Models/Cart.mjs";
 import jwt from "jsonwebtoken";
-export const addCart = async (req, res, next) => {
+
+const addCart = async (req, res) => {
+  const userId = req.user._id;
+  console.log(userId);
   try {
-    if (!req.user) {
-      return res.status(401).send("User not authenticated.");
-    }
-    const cart = await Cart.findOne({ user: req.user._id });
-    if (!cart) {
+    let cart = await Cart.findOne({ user: userId }); // Search for cart with user id
+
+    if (cart) {
+      // Update existing cart
+      cart.cartItems[0] = req.body;
+      cart = await cart.save();
+      return res.status(201).json({ message: "Cart updated", cart });
+    } else {
+      // Create new cart
       const newCart = new Cart({
-        user: req.user._id,
-        items: [],
+        user: userId,
+        cartItems,
       });
-      await newCart.save();
+      const savedCart = await newCart.save();
+      return res.status(201).json({ message: "Cart created", cart: savedCart });
     }
-    const cartItems = req.body;
-    cart.items.push(cartItems);
-    await cart.save();
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: "Internal Server error." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error creating cart" });
   }
 };
 
+export { addCart };
+
 export const getCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user.id }).populate(
-      "items.product"
+    const cart = await Cart.findOne({ user: req.user._id }).populate(
+      "cartItems.product"
     );
-    res.json(cart.items);
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+    res.json(cart.cartItems);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });

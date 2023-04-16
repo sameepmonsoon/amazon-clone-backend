@@ -1,24 +1,17 @@
 import Cart from "../Models/Cart.mjs";
-import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
+
 const addCart = async (req, res) => {
-  const userId = req.user.toString();
+  const userId = req.params.userId;
   console.log("user id", userId);
   try {
-    let cart = await Cart.findOne({ user: userId });
-    if (cart) {
-      // Update existing cart
-      cart.cartItems[0] = req.body;
-      cart = await cart.save();
-      return res.status(201).json({ message: "Cart updated", cart });
-    } else {
-      // Create new cart
-      const newCart = new Cart({
-        user: userId,
-        cartItems: [req.body],
-      });
-      const savedCart = await newCart.save();
-      return res.status(201).json({ message: "Cart created", cart: savedCart });
-    }
+    const cart = await Cart.findOneAndUpdate(
+      { user: userId },
+      { cartItems: [req.body] },
+      { upsert: true, new: true }
+    ).populate("cartItems.product");
+
+    return res.status(201).json({ message: "Cart created", cart });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error creating cart" });
@@ -29,7 +22,8 @@ export { addCart };
 
 export const getCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user._id }).populate(
+    const userId = req.params.userId;
+    const cart = await Cart.findOne({ user: userId }).populate(
       "cartItems.product"
     );
     if (!cart) {

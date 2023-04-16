@@ -1,17 +1,11 @@
-import crypto from "crypto";
+const crypto = require("crypto");
 
-export const authenticateToken = (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  const secret = process.env.TOKEN_SECRET;
+const token = "..."; // your encrypted token
+const secret = "your-secret-key"; // your secret key
+const iv = Buffer.alloc(16, 0); // your initialization vector (IV)
 
-  try {
-    const decipher = crypto.createDecipher("aes192", secret);
-    let decrypted = decipher.update(token, "hex", "utf8");
-    decrypted += decipher.final("utf8");
-    const user = JSON.parse(decrypted);
-    req.user = user;
-    next();
-  } catch (error) {
-    res.status(401).send("Invalid token");
-  }
-};
+const decipher = crypto.createDecipheriv("aes-192-cbc", secret, iv);
+let decrypted = decipher.update(token, "hex", "utf8");
+decrypted += decipher.final("utf8");
+
+console.log(decrypted); // should print the decrypted token

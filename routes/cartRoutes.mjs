@@ -1,8 +1,10 @@
 import express from "express";
 import { addCart, getCart } from "../controller/cartController.mjs";
-import { authenticateToken } from "../authenticateToken.mjs";
+
 const router = express.Router();
-router.post("/addCart", authenticateToken, addCart);
-router.get("/getCart", authenticateToken, getCart);
+
+// Define the routes
+router.post("/:userId/cart", addCart);
+router.get("/:userId/cart", getCart);
 
 export default router;

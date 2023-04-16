@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.mjs";
 import cartRoutes from "./routes/cartRoutes.mjs";
+import paymentRoutes from "./routes/paymentRoutes.mjs";
 const port = 8000;
 const app = express();
 app.use(cors({ origin: "*" }));
@@ -26,6 +27,7 @@ const connect = () => {
 // routes
 app.use("/auth", authRoutes);
 app.use("/cart", cartRoutes);
+app.use("/payment", paymentRoutes);
 
 app.listen(port, () => {
   connect();

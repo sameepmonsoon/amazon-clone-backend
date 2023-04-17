@@ -1,10 +1,8 @@
 import Cart from "../Models/Cart.mjs";
 import mongoose from "mongoose";
-import { v4 as uuidv4 } from "uuid";
 
-const addCart = async (req, res) => {
+export const addCart = async (req, res) => {
   const userId = req.params.userId;
-  console.log("user id", userId);
   try {
     const cart = await Cart.findOneAndUpdate(
       { user: mongoose.Types.ObjectId(userId) }, // convert to ObjectId
@@ -18,8 +16,6 @@ const addCart = async (req, res) => {
     res.status(500).json({ message: "Error creating cart" });
   }
 };
-
-export { addCart };
 
 export const getCart = async (req, res) => {
   try {

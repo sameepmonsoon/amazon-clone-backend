@@ -20,18 +20,15 @@ export const postPayment = async (req, res) => {
   }
 };
 export const getPayment = async (req, res) => {
-  const userId = req.params.userId;
   try {
-    const payment = await Payment.findOne({
-      user: userId,
-    });
+    const userId = req.params.userId;
+    const payment = await Payment.findOne({ user: userId }).lean();
     if (!payment) {
       return res.status(404).json({ message: "payment not found" });
     }
-    const { ...othersData } = payment._doc;
-    res.json(...othersData);
+    res.json(payment);
   } catch (err) {
-    console.log("error:", err);
+    console.log(err);
     res.status(401).send({ message: err.message });
   }
 };

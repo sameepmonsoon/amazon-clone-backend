@@ -2,10 +2,12 @@ import Payment from "../Models/payment.mjs";
 
 export const postPayment = async (req, res) => {
   try {
+    console.log(req.body.address);
     const newPayment = await Payment({
       user: req.params.userId,
       amount: req.body.amount,
       products: req.body.products,
+      address: req.body.address,
     });
     newPayment.save();
     res.status(200).send({

@@ -20,6 +20,11 @@ const PaymentSchema = new mongoose.Schema(
       required: true,
       default: [],
     },
+    address: {
+      type: Array,
+      required: true,
+      default: [],
+    },
   },
   { timestamps: true }
 );

@@ -6,6 +6,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.mjs";
 import cartRoutes from "./routes/cartRoutes.mjs";
 import paymentRoutes from "./routes/paymentRoutes.mjs";
+import productRoutes from "./routes/productRoutes.mjs";
 const port = 8000;
 const app = express();
 app.use(cors({ origin: "*" }));
@@ -28,6 +29,7 @@ const connect = () => {
 app.use("/auth", authRoutes);
 app.use("/cart", cartRoutes);
 app.use("/payment", paymentRoutes);
+app.use("/product", productRoutes);
 
 app.listen(port, () => {
   connect();

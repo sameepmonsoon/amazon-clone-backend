@@ -5,7 +5,7 @@ import schedule
 import time
 def recommendations():
     # Define the connection and collection names
-    client = MongoClient('Mongo_db-here')
+    client = MongoClient('')
     cart_collection_name = 'carts'
     product_collection_name = 'products'
     recommended_collection_name = 'recommendedproducts'

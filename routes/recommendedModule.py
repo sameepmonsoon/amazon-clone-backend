@@ -23,6 +23,11 @@ def recommendations():
     # Extract product ids from the cart and create the binary matrix
     cart_df = pd.DataFrame(cart_documents)
     cart_features = cart_df[['cartItems']]
+    recommended_prod= db['recommendedproducts']
+    recommended_prod_doc =  recommended_prod.find()
+    docsss= pd.DataFrame( recommended_prod_doc)
+
+    print(docsss)
     cart_item_ids = cart_features['cartItems'].apply(lambda x: [item['id'] for sublist in x for item in sublist])
     product_features = product_df[['id']]
     product_ids = product_df['id'].unique()
@@ -39,8 +44,20 @@ def recommendations():
 
     # Insert the present products into the recommended products collection
     recommended_collection = db[recommended_collection_name]
-    recommended_collection.delete_many({})  # Clear the existing recommendations
-    recommended_collection.insert_one({'recommendedproducts':present_products_df.to_dict('records')})
+    # recommended_collection.delete_many({})  
+    # Clear the existing recommendations
+    recommended_products = present_products_df.to_dict('records')
+    existing_doc = recommended_collection.find_one({})
+    if existing_doc is None:  # No document exists in the collection
+        recommended_collection.insert_one({
+            "recommendedProducts": recommended_products
+        })
+    else:
+        recommended_collection.update_one(
+            {},
+            {"$set": {"recommendedProducts": recommended_products}},
+           upsert=True
+        )
     print("hello i am printing")
 def job():
     recommendations()

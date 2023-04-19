@@ -1,16 +1,34 @@
 import RecommendedProduct from "../Models/RecommendedProduct.mjs";
+import { spawn } from "child_process";
 import express from "express";
 const router = express.Router();
 router.get("/get", async (req, res) => {
   try {
-    const recommendedProducts = await RecommendedProduct.find()
-      .populate("recommendedProducts")
-      .exec();
-
+    const recommendedProducts = await RecommendedProduct.findOne().populate(
+      "recommendedProducts"
+    );
+    console.log("recommended products", recommendedProducts);
     if (!recommendedProducts) {
       res.status(404).send("Recommended products not found.");
       return;
     }
+
+    setTimeout(() => {
+      const pythonProcess = spawn("python", [
+        "D:/React/React/Amazone_clone_backend/routes/recommendedModule.py",
+      ]);
+
+      pythonProcess.stdout.on("data", (data) => {
+        console.log(`Python stdout: ${data}`);
+      });
+
+      pythonProcess.stderr.on("data", (data) => {
+        console.error(`Python stderr: ${data}`);
+      });
+      pythonProcess.on("close", async (code) => {
+        console.log(`Python process exited with code ${code}`);
+      });
+    }, 50000);
     res.send(recommendedProducts);
   } catch (err) {
     console.error(err);

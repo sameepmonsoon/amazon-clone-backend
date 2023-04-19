@@ -4,8 +4,9 @@ const RecommendedProductSchema = mongoose.Schema(
   {
     recommendedProducts: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Array,
         ref: "Product",
+        default: [],
       },
     ],
   },

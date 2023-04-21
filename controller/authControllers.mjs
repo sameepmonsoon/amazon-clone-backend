@@ -27,21 +27,42 @@ export const signup = async (req, res, next) => {
       .status(200)
       .json({ token: token, ...othersData });
   } catch (err) {
-    res.status(400).json({ message: "Error creating user: " + err.message });
+    const errorMessage =
+      'Error creating user: MongoServerError: E11000 duplicate key error collection: test.users index: username_1 dup key: { username: "admin" }';
+    const duplicateKeyError = "E11000 duplicate key error";
+    const usernameKey = "index: username_1";
+    const existingUser = await Users.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(409).json({ message: "Email already exists." });
+    }
+    if (
+      errorMessage.includes(duplicateKeyError) &&
+      errorMessage.includes(usernameKey)
+    ) {
+      res.status(409).json({
+        message: "Please choose a different username.",
+      });
+    } else {
+      res.status(500).send("Internal server error.");
+    }
   }
 };
 export const signin = async (req, res, next) => {
   try {
     const user = await Users.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ message: "Account not found. Please sign up to continue." });
     }
     const passwordMatch = await bcrypt.compare(
       req.body.password,
       user.password
     );
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ message: "Incorrect password. Please try again." });
     }
     const token = generateToken(16); // generate a new token
     user.token = token; // update the token field of the authenticated user
@@ -50,7 +71,7 @@ export const signin = async (req, res, next) => {
     res
       .cookie("access_token", token, {
         maxAge: 24 * 60 * 60 * 1000, // 1 day
-        httpOnly: true,
+        httpOnly: true,   
         sameSite: "strict",
       })
       .status(200)

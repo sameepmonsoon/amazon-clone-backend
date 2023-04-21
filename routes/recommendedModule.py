@@ -62,7 +62,7 @@ def recommendations():
 def job():
     recommendations()
 
-schedule.every(1).seconds.do(job)
+schedule.every(1).minute.do(job)
 
 while True:
     schedule.run_pending()
